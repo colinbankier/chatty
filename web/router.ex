@@ -1,6 +1,5 @@
 defmodule Chatty.Router do
   use Phoenix.Router
-  use Phoenix.Router.Socket, mount: "/ws"
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -19,7 +18,9 @@ defmodule Chatty.Router do
     get "/", PageController, :index
   end
 
-  channel "rooms", Chatty.Channels.Rooms
+  socket "/ws", Chatty do
+    channel "rooms:*", Chatty.Channels.Rooms
+  end
 
   # Other scopes may use custom stacks.
   # scope "/api", Chatty do
