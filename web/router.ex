@@ -19,7 +19,7 @@ defmodule Chatty.Router do
   end
 
   socket "/ws", Chatty do
-    channel "rooms:*", Chatty.Channels.Rooms
+    channel "rooms", Channels.Rooms
   end
 
   # Other scopes may use custom stacks.
