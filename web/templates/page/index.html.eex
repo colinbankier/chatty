@@ -3,22 +3,20 @@
   <p class="lead">Phoenix is an Elixir Web Framework targeting full-featured, fault tolerant applications with realtime functionality.</p>
 </div>
 
-<div class="row marketing">
-  <div class="col-lg-6">
-    <div class="col-sm-10">
-      <input id="message-input" class="form-control" \>
-    </div>
-  </div>
+<div id="messages" class="container">
 </div>
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="/static/js/phoenix.js" type="text/javascript"></script>
 
 <script type="text/javascript">
   $(function(){
     var socket = new Phoenix.Socket("ws://" + location.host + "/ws");
+    var $messages = $("#messages");
 
-    socket.join("rooms", "lobby", {}, function(channel){
+    socket.join("rooms", {}, function(channel){
+      channel.on("user:entered", function(message){
+        $messages.append("<br/>[" + message.username + "] entered");
+      });
     });
   });
 </script>
