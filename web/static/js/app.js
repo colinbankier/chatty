@@ -16,7 +16,10 @@ $(function(){
     });
 
     channel.on("new:message", function(message){
-      $messages.append("<br/>[" + message.username + "] " + message.content);
+      var username = message.username || "anonymous"
+      $messages.append("<br/>[" + username + "] " + message.content);
+      var height = $messages[0].scrollHeight;
+      $messages.scrollTop(height);
     });
 
     $messageInput.off("keypress").on("keypress", function(e){
