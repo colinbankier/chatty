@@ -11,6 +11,7 @@ defmodule Chatty do
       supervisor(Chatty.Endpoint, []),
       # Start the Ecto repository
       worker(Chatty.Repo, []),
+      worker(Chatty.RoomServer, []),
       # Here you could define other workers and supervisors as children
       # worker(Chatty.Worker, [arg1, arg2, arg3]),
     ]

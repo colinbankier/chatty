@@ -13,4 +13,14 @@ defmodule Chatty.Channels.Rooms do
     broadcast! socket, topic, message
     {:ok, socket}
   end
+
+  def handle_in("new:room", message, socket) do
+    RoomsServer.add_room message["room"]
+    {:ok, socket}
+  end
+
+  def handle_in("join:room", message, socket) do
+    RoomsServer.join_room message["room"], socket
+    {:ok, socket}
+  end
 end
