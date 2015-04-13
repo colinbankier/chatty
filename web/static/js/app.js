@@ -13,6 +13,11 @@ $(function(){
   var $roomsInput = $("#rooms-input");
   var $addRoom = $("#add-room");
 
+  $('#chat-tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+
   socket.join("rooms", {}, function(channel){
     channel.on("user:entered", function(message){
       $messages.append("<br/>[" + message.username + "] entered");
