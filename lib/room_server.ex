@@ -1,5 +1,6 @@
 defmodule Chatty.RoomServer do
   use GenServer
+  require Logger
 
   def add_room room do
     GenServer.cast(:room_server, {:add_room, room})
@@ -26,6 +27,7 @@ defmodule Chatty.RoomServer do
   end
 
   def handle_cast({:add_room, room}, rooms) do
+    Logger.info "New room #{room}"
     {:noreply, Dict.put_new(rooms, room, HashSet.new)}
   end
 
@@ -33,6 +35,7 @@ defmodule Chatty.RoomServer do
       rooms = Dict.update(rooms, room, HashSet.new, fn members ->
         Set.put(members, socket)
       end)
+      Logger.info "Joined room #{room}"
       {:noreply, rooms}
   end
 

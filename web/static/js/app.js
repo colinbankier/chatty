@@ -9,6 +9,9 @@ $(function(){
   var $messages = $("#messages");
   var $messageInput = $("#message-input");
   var $usernameInput = $("#username");
+  var $rooms = $("#rooms");
+  var $roomsInput = $("#rooms-input");
+  var $addRoom = $("#add-room");
 
   socket.join("rooms", {}, function(channel){
     channel.on("user:entered", function(message){
@@ -21,6 +24,17 @@ $(function(){
       var height = $messages[0].scrollHeight;
       $messages.scrollTop(height);
     });
+    channel.on("new:room", function(message){
+      console.log(message);
+      var room = message.room;
+      var link_id = "join_room_" + room
+      $rooms.append('<a id="' + link_id + '" href="#">' + message.room + '</a>');
+      $("#" + link_id).click(function (){
+        channel.send("join:room", {
+          room: room
+        });
+      });
+    });
 
     $messageInput.off("keypress").on("keypress", function(e){
       console.log("pressed");
@@ -29,8 +43,16 @@ $(function(){
           content: $messageInput.val(),
           username: $usernameInput.val(),
         });
+
         $messageInput.val("");
       }
+    });
+
+    $addRoom.click(function(){
+      channel.send("new:room", {
+        room: $roomsInput.val()
+      });
+      $roomsInput.val("");
     });
   });
 });
