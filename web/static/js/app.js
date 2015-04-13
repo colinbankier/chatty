@@ -15,80 +15,86 @@ $(function(){
   var $current_room = "lobby";
   var $channel;
 
-  function add_room(room) {
+  function add_room(channel, room) {
       var link_id = "join-room-" + room;
-      $rooms.append('<a id="' + link_id + '" href="#">' + room + '</a>');
-      $("#" + link_id).click(function (){
-        join_room(room);
+      if($("#" + link_id).length == 0) {
+        $rooms.append('<a id="' + link_id + '" href="#">' + room + '</a>');
+        $("#" + link_id).click(function (){
+          join_room(channel, room);
+        });
+      }
+  }
+
+  function join_room(channel, room) {
+      console.log("joined " + room);
+      add_room_tab(room);
+      channel.send("join:room", {
+        room: room
       });
   }
 
-  function join_room(room) {
-      console.log("joined " + room);
-      var room_tab = add_room_tab(room);
-      console.log(room_tab);
-      $channel.on("user:entered:" + room, function(message){
-      console.log(room_tab);
-        room_tab.append("<br/>[" + message.username + "] entered");
-      });
-      $channel.on("new:message", function(message){
-        console.log("new message " + room);
-      });
-
-      $channel.on("new:message:" + room, function(message){
-        var username = message.username || "anonymous";
-        console.log("Got message:");
-        console.log(message);
-        room_tab.append("<br/>[" + username + "] " + message.content);
-        var height = room_tab[0].scrollHeight;
-        room_tab.scrollTop(height);
-      });
+  function display_message(message, content) {
+    var username = message.username || "anonymous";
+    var room = message.room || "lobby";
+    var room_tab = $("#chat-tab-" + room);
+    room_tab.append("<br/>[" + username + "] " + content);
+    var height = room_tab[0].scrollHeight;
+    room_tab.scrollTop(height);
   }
 
   function add_room_tab(room) {
     var room_tab = "chat-tab-" + room;
-    $('<li role="presentation" class=""><a href="#' + room_tab + '" aria-controls="' + room_tab + '" role="tab" data-toggle="tab">' + room + '</a></li>').appendTo("#tablist");
-    $('<div role="tabpanel" class="tab-pane" id="' + room_tab + '">' + room + '</div>').appendTo("#tab-content");
-    $('#chat-tabs a[href="#' + room_tab + '"]').click(function (e) {
-      e.preventDefault();
-      $current_room = room;
-      $(this).tab('show');
-    });
-    $('#chat-tabs a[href="#' + room_tab + '"]').click(function (e) {
-      e.preventDefault();
-      $current_room = room;
-      $(this).tab('show');
-    });
-    return $("#" + room_tab);
+    if($("#" + room_tab).length == 0) {
+      $('<li role="presentation" class=""><a href="#' + room_tab + '" aria-controls="' + room_tab + '" role="tab" data-toggle="tab">' + room + '</a></li>').appendTo("#tablist");
+      $('<div role="tabpanel" class="tab-pane" id="' + room_tab + '">' + room + '</div>').appendTo("#tab-content");
+      $('#chat-tabs a[href="#' + room_tab + '"]').click(function (e) {
+        e.preventDefault();
+        $current_room = room;
+        $(this).tab('show');
+      });
+      $('#chat-tabs a[href="#' + room_tab + '"]').click(function (e) {
+        e.preventDefault();
+        $current_room = room;
+        $(this).tab('show');
+      });
+    }
   }
 
-  $.ajax({
-    url: location.protocol + "//" + location.host + "/api/rooms",
-    success: function(response){
-      response.rooms.forEach(function(room) {
-        add_room(room);
-      });
-    },
-    dataType: "json"
-  });
+  function get_rooms(channel) {
+    $.ajax({
+      url: location.protocol + "//" + location.host + "/api/rooms",
+      success: function(response){
+        response.rooms.forEach(function(room) {
+          add_room(channel, room);
+        });
+      },
+      dataType: "json"
+    });
+  }
 
   socket.join("rooms", {}, function(channel){
     $channel = channel;
+    get_rooms(channel);
     channel.on("new:room", function(message){
       add_room(message.room);
     });
-    // channel.on("new:message", function(message){
-    //   console.log("new message rooms");
-    // });
-    // channel.on("new:message:bees", function(message){
-    //   console.log("new message rooms bees");
-    // });
+    $channel.on("user:entered", function(message){
+      console.log(message);
+      display_message(message, "entered");
+    });
+
+    $channel.on("new:message", function(message){
+      console.log("Got message:");
+      console.log(message);
+      display_message(message, message.content);
+    });
 
     $messageInput.off("keypress").on("keypress", function(e){
       if (e.keyCode ==13) {
-        channel.send("new:message:" + $current_room, {
+        channel.send("new:message", {
           content: $messageInput.val(),
           username: $usernameInput.val(),
+          room: $current_room,
         });
 
         $messageInput.val("");

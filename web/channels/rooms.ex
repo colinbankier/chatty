@@ -9,7 +9,7 @@ defmodule Chatty.Channels.Rooms do
     {:ok, socket}
   end
 
-  def handle_in(topic = "new:message:" <> room, message, socket) do
+  def handle_in(topic = "new:message", message, socket) do
     Logger.debug "Handle #{topic}"
     broadcast! socket, topic, message
     {:ok, socket}
@@ -24,9 +24,5 @@ defmodule Chatty.Channels.Rooms do
   def handle_in("join:room", message, socket) do
     RoomServer.join_room socket, message["room"]
     {:ok, socket}
-  end
-
-  def handle_in(topic, message, socket) do
-    Logger.error "unhandled topic #{topic}"
   end
 end
