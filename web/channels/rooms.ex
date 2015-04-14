@@ -5,7 +5,7 @@ defmodule Chatty.Channels.Rooms do
 
   def join(topic, message, socket) do
     Logger.debug "JOIN: #{socket.channel}:#{topic}:#{inspect message}"
-    broadcast socket, "user:entered", %{username: message["username"] || "anon"}
+    reply socket, "init:rooms", %{rooms: RoomServer.rooms}
     {:ok, socket}
   end
 
@@ -23,6 +23,10 @@ defmodule Chatty.Channels.Rooms do
 
   def handle_in("join:room", message, socket) do
     RoomServer.join_room socket, message["room"]
+    broadcast socket, "user:entered", %{
+      username: message["username"] || "anon",
+      room: message["room"]
+    }
     {:ok, socket}
   end
 end

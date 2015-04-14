@@ -10,6 +10,10 @@ defmodule Chatty.RoomServer do
     GenServer.call(:room_server, {:rooms})
   end
 
+  def rooms member do
+    GenServer.call(:room_server, {:rooms, member})
+  end
+
   def join_room socket, room do
     GenServer.cast(:room_server, {:join_room, socket, room})
   end
@@ -23,7 +27,7 @@ defmodule Chatty.RoomServer do
   end
 
   def init(_) do
-    {:ok, %{}}
+    {:ok, %{"lobby" => HashSet.new}}
   end
 
   def handle_cast({:add_room, room}, rooms) do
@@ -41,6 +45,17 @@ defmodule Chatty.RoomServer do
 
   def handle_call({:rooms}, _, rooms) do
     {:reply, Dict.keys(rooms), rooms}
+  end
+
+  def handle_call({:rooms, member}, _, rooms) do
+      member_rooms = Enum.filter_map(rooms,
+        fn {_, members} ->
+          Enum.member? members, member
+        end,
+        fn {room, _} -> room end
+      )
+
+    {:reply, member_rooms, rooms}
   end
 
   def handle_call({:room_members, room}, _, rooms) do

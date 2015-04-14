@@ -13,7 +13,6 @@ $(function(){
   var $roomsInput = $("#rooms-input");
   var $addRoom = $("#add-room");
   var $current_room = "lobby";
-  var $channel;
 
   function add_room(channel, room) {
       var link_id = "join-room-" + room;
@@ -29,6 +28,7 @@ $(function(){
       console.log("joined " + room);
       add_room_tab(room);
       channel.send("join:room", {
+        username: $usernameInput.val(),
         room: room
       });
   }
@@ -42,51 +42,49 @@ $(function(){
     room_tab.scrollTop(height);
   }
 
+  function set_current_room(room) {
+    var room_tab = "chat-tab-" + room;
+    $current_room = room;
+    console.log($('#chat-tabs a[href="#' + room_tab + '"]'));
+    $('#chat-tabs a[href="#' + room_tab + '"]').tab('show');
+  }
+
   function add_room_tab(room) {
     var room_tab = "chat-tab-" + room;
     if($("#" + room_tab).length == 0) {
       $('<li role="presentation" class=""><a href="#' + room_tab + '" aria-controls="' + room_tab + '" role="tab" data-toggle="tab">' + room + '</a></li>').appendTo("#tablist");
-      $('<div role="tabpanel" class="tab-pane" id="' + room_tab + '">' + room + '</div>').appendTo("#tab-content");
+      $('<div role="tabpanel" class="tab-pane" id="' + room_tab + '"></div>').appendTo("#tab-content");
       $('#chat-tabs a[href="#' + room_tab + '"]').click(function (e) {
         e.preventDefault();
-        $current_room = room;
-        $(this).tab('show');
+        set_current_room(room);
       });
-      $('#chat-tabs a[href="#' + room_tab + '"]').click(function (e) {
-        e.preventDefault();
-        $current_room = room;
-        $(this).tab('show');
-      });
+      set_current_room(room);
     }
   }
 
-  function get_rooms(channel) {
-    $.ajax({
-      url: location.protocol + "//" + location.host + "/api/rooms",
-      success: function(response){
-        response.rooms.forEach(function(room) {
-          add_room(channel, room);
-        });
-      },
-      dataType: "json"
-    });
-  }
-
   socket.join("rooms", {}, function(channel){
-    $channel = channel;
-    get_rooms(channel);
+    join_room(channel, "lobby");
     channel.on("new:room", function(message){
-      add_room(message.room);
+      add_room(channel, message.room);
     });
-    $channel.on("user:entered", function(message){
+    channel.on("user:entered", function(message){
+      console.log("User entered");
       console.log(message);
       display_message(message, "entered");
     });
 
-    $channel.on("new:message", function(message){
+    channel.on("new:message", function(message){
       console.log("Got message:");
       console.log(message);
       display_message(message, message.content);
+    });
+
+    channel.on("init:rooms", function(message){
+      console.log("Got rooms:");
+      console.log(message);
+      message.rooms.forEach(function(room) {
+        add_room(channel, room);
+      });
     });
 
     $messageInput.off("keypress").on("keypress", function(e){
@@ -102,9 +100,11 @@ $(function(){
     });
 
     $addRoom.click(function(){
+      var room = $roomsInput.val();
       channel.send("new:room", {
-        room: $roomsInput.val()
+        room: room
       });
+      join_room(channel, room);
       $roomsInput.val("");
     });
   });

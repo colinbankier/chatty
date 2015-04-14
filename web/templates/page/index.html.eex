@@ -2,19 +2,12 @@
   <input id="rooms-input" class="form-control" />
   <button id="add-room" type="button">Add room</button>
 </div>
+
 <div id="chat-tabs" role="tabpanel">
-
-  <!-- Nav tabs -->
-  <ul id="tablist" class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#chat-tab-lobby" aria-controls="chat-tab-lobby" role="tab" data-toggle="tab">Lobby</a></li>
-  </ul>
-
-  <!-- Tab panes -->
-  <div id="tab-content" class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="chat-tab-lobby">...</div>
-  </div>
-
+  <ul id="tablist" class="nav nav-tabs" role="tablist"></ul>
+  <div id="tab-content" class="tab-content"></div>
 </div>
+
 <div id="footer">
   <div class="container">
     <div class="row">
