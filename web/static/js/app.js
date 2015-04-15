@@ -100,7 +100,7 @@ $(function(){
     });
 
     $addRoom.click(function(){
-      var room = $roomsInput.val();
+      var room = $roomsInput.val().replace(/[^\w-]/gi, '');
       channel.send("new:room", {
         room: room
       });
