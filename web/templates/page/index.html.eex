@@ -1,11 +1,16 @@
-<div id="rooms" class="container">
-  <input id="rooms-input" class="form-control" />
-  <button id="add-room" type="button">Add room</button>
-</div>
 
-<div id="chat-tabs" role="tabpanel">
-  <ul id="tablist" class="nav nav-tabs" role="tablist"></ul>
-  <div id="tab-content" class="tab-content"></div>
+<div class="container">
+  <div class="col-md-2">
+    <h3>Rooms</h3>
+    <ul id="rooms" >
+    </ul>
+    <input id="rooms-input" class="form-control" />
+    <button id="add-room" type="button">Add room</button>
+  </div>
+  <div id="chat-tabs" class="col-md-8" role="tabpanel">
+    <ul id="tablist" class="nav nav-tabs" role="tablist"></ul>
+    <div id="tab-content" class="tab-content"></div>
+  </div>
 </div>
 
 <div id="footer">

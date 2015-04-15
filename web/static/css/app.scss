@@ -22,9 +22,19 @@ body, html {
   background-color: #f5f5f5;
 }
 
-#chat-tabs {
-  height: 60%;
+#rooms li, ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-pane {
+  height: 12em;
   overflow-y: scroll;
+  border-color: rgb(221, 221, 221);
+  border-style: solid;
+  border-width: 1px;
+  border-top-width: 0px;
 }
 /* Custom page CSS
 -------------------------------------------------- */

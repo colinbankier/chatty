@@ -17,7 +17,7 @@ $(function(){
   function add_room(channel, room) {
       var link_id = "join-room-" + room;
       if($("#" + link_id).length == 0) {
-        $rooms.append('<a id="' + link_id + '" href="#">' + room + '</a>');
+        $rooms.append('<li><a id="' + link_id + '" href="#">' + room + '</a></li>');
         $("#" + link_id).click(function (){
           join_room(channel, room);
         });
