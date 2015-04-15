@@ -33,4 +33,15 @@ defmodule RoomServerTest do
 
     assert rooms(socket_1), ["Room 1", "Room 2"]
   end
+
+  test "join room indicates whether member was already in room" do
+    socket = %{socket: 1}
+
+    add_room "room"
+    first_join = join_room socket, "room"
+    second_join = join_room socket, "room"
+
+    assert first_join == :ok
+    assert second_join == :already_joined
+  end
 end

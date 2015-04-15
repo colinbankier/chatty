@@ -11,7 +11,7 @@ defmodule Chatty.Channels.Rooms do
 
   def handle_in(topic = "new:message", message, socket) do
     Logger.debug "Handle #{topic}"
-    broadcast! socket, topic, message
+    reply_to_room_members message["room"], topic, message
     {:ok, socket}
   end
 
@@ -22,11 +22,18 @@ defmodule Chatty.Channels.Rooms do
   end
 
   def handle_in("join:room", message, socket) do
-    RoomServer.join_room socket, message["room"]
-    broadcast socket, "user:entered", %{
-      username: message["username"] || "anon",
-      room: message["room"]
-    }
+    if RoomServer.join_room(socket, message["room"]) == :ok do
+      reply_to_room_members message["room"], "user:entered", %{
+        username: message["username"] || "anon",
+        room: message["room"]
+      }
+    end
     {:ok, socket}
+  end
+
+  def reply_to_room_members room, topic, message do
+    Enum.each RoomServer.room_members(room), fn member ->
+      reply member, topic, message
+    end
   end
 end

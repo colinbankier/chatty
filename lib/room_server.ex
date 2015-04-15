@@ -15,7 +15,7 @@ defmodule Chatty.RoomServer do
   end
 
   def join_room socket, room do
-    GenServer.cast(:room_server, {:join_room, socket, room})
+    GenServer.call(:room_server, {:join_room, socket, room})
   end
 
   def room_members room do
@@ -35,12 +35,17 @@ defmodule Chatty.RoomServer do
     {:noreply, Dict.put_new(rooms, room, HashSet.new)}
   end
 
-  def handle_cast({:join_room, socket, room}, rooms) do
+  def handle_call({:join_room, socket, room}, _, rooms) do
+    {reply, rooms} = if member?(rooms, room, socket) do
+      {:already_joined, rooms}
+    else
       rooms = Dict.update(rooms, room, HashSet.new, fn members ->
         Set.put(members, socket)
       end)
-      Logger.info "Joined room #{room}"
-      {:noreply, rooms}
+      {:ok, rooms}
+    end
+    Logger.info "Joined room #{room} #{reply}"
+    {:reply, reply, rooms}
   end
 
   def handle_call({:rooms}, _, rooms) do
@@ -61,5 +66,9 @@ defmodule Chatty.RoomServer do
   def handle_call({:room_members, room}, _, rooms) do
     members = Dict.get(rooms, room) |> Set.to_list
     {:reply, members, rooms}
+  end
+
+  defp member?(rooms, room, member) do
+    Dict.get(rooms, room) |> Set.member?(member)
   end
 end
