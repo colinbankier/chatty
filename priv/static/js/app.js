@@ -3250,7 +3250,6 @@ $(function () {
         $messageInput.val("");
       }
     });
-    // some thing changed
 
     $addRoom.click(function () {
       var room = $roomsInput.val().replace(/[^\w-]/gi, "");

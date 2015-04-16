@@ -10,6 +10,7 @@ config :chatty, Chatty.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   cache_static_lookup: false,
+  reloadable_paths: ["web", "lib"],
   watchers: [{Path.expand("node_modules/brunch/bin/brunch"), ["watch"]}]
 
 # Watch static and templates for browser reloading.
