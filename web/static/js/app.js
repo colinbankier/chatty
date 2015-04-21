@@ -1,8 +1,11 @@
 import {Socket} from "phoenix"
 
-// let socket = new Socket("/ws")
-// socket.join("topic:subtopic", {}, chan => {
-// })
+$(function(){
+  var socket = new Phoenix.Socket("/ws");
+  socket.connect();
+  socket.join("chat", {}, function(channel){
+  });
+});
 
 let App = {
 }
