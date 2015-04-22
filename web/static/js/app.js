@@ -13,6 +13,7 @@ $(function(){
     channel.on("new:message", function(message){
       var username = message.username || "anonymous"
       $messages.append("<br/>[" + username + "] " + message.content);
+      scrollTo(0, document.body.scrollHeight)
     });
 
     $messageInput.off("keypress").on("keypress", function(e){
