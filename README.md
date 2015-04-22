@@ -64,7 +64,7 @@ Most of the interesting stuff is in the `web` directory, which looks like this:
 |   └── page_view.ex
 └── web.ex
 ```
-To get an idea of what's in there, open up a few files in there and have a poke around. Those familiar with Rails should feel a string similarity to what Rails would give you. Here's the general gist:
+To get an idea of what's in there, open up a few files in there and have a poke around. Those familiar with Rails should feel a strong similarity to what Rails would give you. Here's the general gist:
  - The Router: parses incoming requests and dispatches to the correct controller/action
  - Controllers: provide functions, called actions, to handle requests
  - Views: render templates define helper functions
@@ -335,7 +335,7 @@ and add a `handle_info` function:
     {:noreply, socket}
   end
 ```
-The extra `send` and `handle_info` are used becuase `push` and `broadcast` can only be called after the socket has finished joining.
+The extra `send` and `handle_info` are used because `push` and `broadcast` can only be called after the socket has finished joining.
 These are GenServer functions, for further info on these, see (http://elixir-lang.org/docs/master/elixir/GenServer.html).
 
 Next we'll add some javascript to handle the event, and use jQuery to display a message on the page:
@@ -372,7 +372,27 @@ with source:
 Phoenix docs:
 (http://www.phoenixframework.org/)
 
+## Deploy to Heroku
+To deploy to Heroku, first you'll need a Heroku account, a free one is perfect.
+You can generally follow the guide for setting up a Ruby app, just substituting Elixir commands where appropriate:
+(https://devcenter.heroku.com/articles/getting-started-with-ruby#introduction)
 
+After the app has been created, you need to set a custom build-pack:
+`heroku buildpack:set https://github.com/HashNuke/heroku-buildpack-elixir`
+
+And include the following config files in your app:
+(https://github.com/colinbankier/chatty/blob/cb-room-server/elixir_buildpack.config)
+
+(https://github.com/colinbankier/chatty/blob/cb-room-server/Procfile)
+
+One final thing is to deal with static assets. I'm not sure the correct way to deal with static assets on Heroku
+(maybe someone can enlighten us all?) but the quickest way to make it work is to commit the compiled assets files:
+ - `priv/static/css/app.css`
+ - `priv/static/css/app.css.map`
+ - `priv/static/js/app.js`
+ - `priv/static/js/app.js.map`
+
+Push all that to your heroku remote, and hey presto! You should have your app hosted.
 
 
 
