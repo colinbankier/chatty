@@ -273,7 +273,45 @@ in your console.
 
 # Let's Chat
 Ok, a basic socket is hooked up, let's make it chat!
-First, lets just send out a message to all connected sockets when someone connects. Add this line to your `join` function in `chat.ex`:
+First, lets add the client-side code in `app.js`. We'll use jQuery to find the relevant elements on the page, add this
+under our `var socket = ...` line:
+```
+  var $messages = $("#messages");
+  var $messageInput = $("#message-input");
+  var $usernameInput = $("#username");
+```
+Inside the `socket.join` callback, we handle new messages and display them on the page:
+```
+    channel.on("new:message", function(message){
+      var username = message.username || "anonymous"
+      $messages.append("<br/>[" + username + "] " + message.content);
+    });
+```
+Next we send our own message when "return" (keycode 13) is pressed in our message input:
+```
+    $messageInput.off("keypress").on("keypress", function(e){
+      if (e.keyCode ==13) {
+        channel.send("new:message", {
+          content: $messageInput.val(),
+          username: $usernameInput.val(),
+        });
+        $messageInput.val("");
+      }
+    });
+```
+It first removes the event, so that it doesn't end up with multiple if the socket disconnects and connects again.
+Finally, we listen for a "new:message" topic in our channel on the server-side, and broadcast it out to all connected channels:
+```
+  def handle_in(topic = "new:message", message, socket) do
+    broadcast! socket, topic, message
+    {:reply, :ok, socket}
+  end
+```
+Try it out! You should be able to chat between multiple browser tabs.
+
+## Broadcast on connected
+Lets send out a message to all connected sockets when someone connects. Update your `join` function to the following
+and add a `handle_info` function:
 ```
   def join(topic, message, socket) do
     Logger.debug "JOIN: #{socket.channel}:#{topic}:#{inspect message}"
@@ -288,18 +326,14 @@ First, lets just send out a message to all connected sockets when someone connec
     {:noreply, socket}
   end
 ```
+The extra `send` and `handle_info` are used becuase `push` and `broadcast` can only be called after the socket has finished joining.
+These are GenServer functions, for further info on these, see (http://elixir-lang.org/docs/master/elixir/GenServer.html).
 
 Next we'll add some javascript to handle the event, and use jQuery to display a message on the page:
 In `app.js` update your existing code to include:
 ```
-  var $messages = $("#messages");
-
-  socket.connect();
-  socket.join("chat", {})
-    .receive("ok", function(channel){
-    channel.on("user:entered", function(message){
-      $messages.append("<br/>[" + message.username + "] entered");
-    });
+  channel.on("user:entered", function(message){
+    $messages.append("<br/>[" + message.username + "] entered");
   });
 ```
 Every time you open a new browser window, you should see a new "user conntect" message.
