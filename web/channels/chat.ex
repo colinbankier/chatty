@@ -8,6 +8,11 @@ defmodule Chatty.ChatChannel do
     {:ok, socket}
   end
 
+  def handle_in(topic = "new:message", message, socket) do
+    broadcast! socket, topic, message
+    {:reply, :ok, socket}
+  end
+
   def handle_info({:after_join, message}, socket) do
     broadcast! socket, "user:entered", %{
       username: message["username"] || "anonymous"
