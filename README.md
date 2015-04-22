@@ -239,7 +239,7 @@ You'll notice the default css includes the entire Twitter Bootstrap css in `app.
 precompiled automatically before being sent to the browser.
 
 Here is what your new template/layout should look like:
-<img src="https://raw.githubusercontent.com/colinbankier/chatty/master/readme_assets/template.png" alt="template" title="template/>
+![finished layout](https://raw.githubusercontent.com/colinbankier/chatty/master/readme_assets/template.png)
 
 # You promised us WebSockets!
 All right, now that we have the start of our UI in place, lets implement the exciting stuff, WebSockets! Add this section to your `web/router.ex`:
@@ -346,8 +346,7 @@ In `app.js` update your existing code to include:
   });
 ```
 Every time you open a new browser window, you should see a new "[user] entered" message.
-
-<img src="https://raw.githubusercontent.com/colinbankier/chatty/master/readme_assets/chatting.png" alt="chatting" title="chatting/>
+![chatting](https://raw.githubusercontent.com/colinbankier/chatty/master/readme_assets/chatting.png)
 
 # That's the basics!
 Well, that's the basic app! In a few lines of code in the `chat.ex` channel, and a handful of javascipt on the client,
