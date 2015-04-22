@@ -103,12 +103,209 @@ Let's try run it again:
 Ok, it's telling us that it expects a module `Chatty.ChatView`. That's pretty reasonable, if you remember views are called by controllers to render out templates.
 Create `web/views/chat_view.ex`
 ```
-defmodule HelloPhoenix.HelloView do
-  use HelloPhoenix.Web, :view
+defmodule Chatty.ChatView do
+  use Chatty.Web, :view
 end
 ```
 We also need a template, create `web/templates/chat/index.html.eex`. Lets just put anything in there for now to see it working, we'll fill in some real content soon.
 ```
 <p>One day, I want to be a Chat Application.</p>
 ```
+Check out the page in browser again, you'll see your content, you've successfully created your controller, view and template!
+
+You may have noticed something cool - if you edit your template, you don't even have to refresh your browser to see the change. Whoa. Magic.
+Let's add some real HTML for our Chat App.
+
+# Chat App layout and template
+Templates are rendered in a layout. We'll create a new layout for the chat window of our app.
+Create our new layout `web/templates/layouts/chat.html.eex`
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Chatty</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+  </head>
+
+  <body>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Phoenix Chat</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav pull-right">
+            <li><a href="http://github.com/phoenixframework/phoenix">Learn more about the Phoenix Framework</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+      <%= @inner %>
+
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <script>require("web/static/js/app")</script>
+  </body>
+</html>
+```
+And some HTML for our template, replace the contents of `web/templates/chat/index.html.eex` with this:
+```
+<div id="messages" class="container">
+</div>
+<div id="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-2">
+        <div class="input-group">
+          <span class="input-group-addon">@</span>
+          <input id="username" type="text" class="form-control" placeholder="username">
+        </div><!-- /input-group -->
+      </div><!-- /.col-lg-6 -->
+      <div class="col-sm-10">
+        <input id="message-input" class="form-control" />
+      </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
+  </div>
+</div>
+```
+Our markup needs a little CSS to make things sit right. Create `web/static/css/app.scss` and stick the following in it.
+```
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+body, html {
+  overflow: hidden;
+  height: 100%;
+}
+#footer {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  padding-top: 1em;
+  background-color: #f5f5f5;
+}
+
+#messages {
+  margin-top: 80px;
+}
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+  padding: 60px 15px 0;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+
+#footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+```
+You'll notice the default css includes the entire Twitter Bootstrap css in `app.scss`. Any files in these `web/static` directories are
+precompiled automatically before being sent to the browser.
+
+# You promised us WebSockets!
+All right, now that we have the start of our UI in place, lets implement the exciting stuff, WebSockets! Add the this section to your `web/router.ex`:
+```
+  socket "/ws", Chatty do
+    channel "chat", ChatChannel
+  end
+```
+This routes any WebSocket messages with the topic "chat" to a module `ChatChannel`. This doesn't exist yet, let's create it. Create `web/channels/chat.ex`:
+```
+defmodule Chatty.ChatChannel do
+  use Phoenix.Channel
+  require Logger
+
+  def join(topic, message, socket) do
+    Logger.debug "JOIN: #{socket.channel}:#{topic}:#{inspect message}"
+  end
+end
+```
+There are a couple actions you can handle, `join` is one of them. For moredetails see (http://www.phoenixframework.org/v0.11.0/docs/channels).
+
+Lets add some Javascript to join our channel. It won't do much yet, but it should print our log message.
+We'll use jquery to implement updating elements on the page etc, so lets grab that.
+Download () into `web/static/vendor/`.
+If you're on an unix-ish OS, this should do the trick:
+`curl http://code.jquery.com/jquery-1.11.2.min.js > web/static/vendor/jquery-1.11.2.min.js`
+Open up `web/static/js/app.js` and enter the following:
+```
+$(function(){
+  var socket = new Phoenix.Socket("/ws");
+  socket.connect();
+  socket.join("chat", {}, function(channel){
+  });
+});
+
+```
+This should join our socket on page load. It won't do anything great yet, but you should see our log message
+in your console.
+
+# Let's Chat
+Ok, a basic socket is hooked up, let's make it chat!
+First, lets just send out a message to all connected sockets when someone connects. Add this line to your `join` function in `chat.ex`:
+```
+  def join(topic, message, socket) do
+    Logger.debug "JOIN: #{socket.channel}:#{topic}:#{inspect message}"
+    send(self, {:after_join, message})
+    {:ok, socket}
+  end
+
+  def handle_info({:after_join, message}, socket) do
+    broadcast! socket, "user:entered", %{
+      username: message["username"] || "anonymous"
+    }
+    {:noreply, socket}
+  end
+```
+
+Next we'll add some javascript to handle the event, and use jQuery to display a message on the page:
+In `app.js` update your existing code to include:
+```
+  var $messages = $("#messages");
+
+  socket.connect();
+  socket.join("chat", {})
+    .receive("ok", function(channel){
+    channel.on("user:entered", function(message){
+      $messages.append("<br/>[" + message.username + "] entered");
+    });
+  });
+```
+Every time you open a new browser window, you should see a new "user conntect" message.
+
+
+
+
+
 
