@@ -285,6 +285,7 @@ Inside the `socket.join` callback, we handle new messages and display them on th
     channel.on("new:message", function(message){
       var username = message.username || "anonymous"
       $messages.append("<br/>[" + username + "] " + message.content);
+      scrollTo(0, document.body.scrollHeight)
     });
 ```
 Next we send our own message when "return" (keycode 13) is pressed in our message input:
@@ -336,7 +337,32 @@ In `app.js` update your existing code to include:
     $messages.append("<br/>[" + message.username + "] entered");
   });
 ```
-Every time you open a new browser window, you should see a new "user conntect" message.
+Every time you open a new browser window, you should see a new "user connected" message.
+
+# That's the basics!
+Well, that's the basic app! In a few lines of code in the `chat.ex` channel, and a handful of javascipt on the client,
+we've created a simple real-time chat app using WebSockets.
+
+That's the end of the hand-holding section, but you don't have to stop there! Now is the time to take it further by
+yourself. There are lots of ways to extend this app to learn more, here are a few ideas:
+
+ - Create a multi-room chat instead of just a single room
+ - Allow private chat channels
+ - Require a username before connecting, so the "[username] connected" message can display their name
+ - Deploy your app to heroku to chat with us all
+ - Anything else you can dream of!
+
+# Resources
+Here are some links relevant to this little project.
+
+This workshop is based of a sample app provided by Chris McCord:
+(http://phoenixchat.herokuapp.com/)
+with source:
+(https://github.com/chrismccord/phoenix_chat_example).
+
+Phoenix docs:
+(http://www.phoenixframework.org/)
+
 
 
 
