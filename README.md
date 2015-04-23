@@ -126,8 +126,8 @@ You may have noticed something cool - if you edit your template, you don't even 
 Let's add some real HTML for our Chat App.
 
 # Chat App layout and template
-Templates are rendered in a layout. We'll create a new layout for the chat window of our app.
-Create our new layout `web/templates/layout/chat.html.eex`
+Templates are rendered in a layout. We'll update the application layout for the chat window of our app.
+Overwrite `web/templates/layout/application.html.eex` with:
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -190,7 +190,7 @@ And some HTML for our template, replace the contents of `web/templates/chat/inde
   </div>
 </div>
 ```
-Our markup needs a little CSS to make things sit right. Create `web/static/css/app.scss` and stick the following in it.
+Our markup needs a little CSS to make things sit right. Create `web/static/css/chat.scss` and stick the following in it.
 ```
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -239,8 +239,8 @@ code {
   font-size: 80%;
 }
 ```
-You'll notice the default css includes the entire Twitter Bootstrap css in `app.scss`. The correct place for this is prbably in the `vendor` directory. Phoenix uses Brunch.io to do asset compilation. Any files in these `web/static` directories are
-precompiled automatically before being sent to the browser.
+You'll notice the default css includes the entire Twitter Bootstrap css in `app.scss`. The correct place for this is prbably in the `vendor` directory. Phoenix uses Brunch.io to do asset compilation, so can handle things like less, or coffeescript easily. Any files in these `web/static` directories are
+precompiled (into `priv` directory) automatically before being sent to the browser.
 
 Here is what your new template/layout should look like:
 ![finished layout](https://raw.githubusercontent.com/colinbankier/chatty/master/readme_assets/template.png)
