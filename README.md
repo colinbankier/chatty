@@ -1,18 +1,18 @@
 # Build a real-time chat app with Phoenix
 In this tutorial, we're going to walk through building a simple chat application using WebSockets in the Phoenix web framework.
 This tutorial is based on an example app provided by Chris McCord, the author of Phoenix. You can try out the
-end result here: <http://phoenixchat.herokuapp.com//>
+end result here: <http://phoenixchat.herokuapp.com/>
 
 Have a play with it before we get started!
 # Getting Setup
-This part of the guide is mostly extracted from (http://www.phoenixframework.org/v0.11.0/docs/up-and-running). You follow up there later if you like, but everything you need for now should be below.
+This part of the guide is mostly extracted from <http://www.phoenixframework.org/v0.11.0/docs/up-and-running>. You follow up there later if you like, but everything you need for now should be below.
 ## Get Elixir
-First steps, make sure Elixir is installed, see the installation guide: (http://elixir-lang.org/install.html)
+First steps, make sure Elixir is installed, see the installation guide: <http://elixir-lang.org/install.html>
 Phoenix requires at least 1.0.4. Just ensure you have the latest.
 ## Git
 It is also assumed you have git installed, if not, do whatever you do for your platform to get it.
 ## NPM
-Javascript packages are managed by npm, you'll need to nodejs too: (https://nodejs.org/)
+Javascript packages are managed by npm, you'll need to nodejs too: <https://nodejs.org/>
 
 ## Get Phoenix
 From any directory, install the phoenix archive. We'll choose the latest version 0.11.0.
@@ -30,7 +30,7 @@ cd chatty
 ```
 # Lets run it
 `mix phoenix.server`
-then in a browser go to (http://localhost:4000)
+then in a browser go to <http://localhost:4000>
 Cool. It's given us a default page and stuff.
 ![phoenix default page](https://www.filepicker.io/api/file/0t1GuSinQ1yeRhw3ZgLK)
 To kill it, do `Ctrl-c` twice. Yep, twice.
@@ -73,7 +73,7 @@ To get an idea of what's in there, open up a few files in there and have a poke 
 Lets create our own to really get the idea.
 
 # Adding our own controller, view and template
-More detail here, if you want to dig further: (http://www.phoenixframework.org/v0.11.0/docs/adding-pages)
+More detail here, if you want to dig further: <http://www.phoenixframework.org/v0.11.0/docs/adding-pages>
 
 In `web/router.ex` let's change the line that said
 ```
@@ -101,7 +101,7 @@ defmodule Chatty.ChatController do
   end
 end
 ```
-If you want understand a bit more about Phoenix controllers, you can follow up here (http://www.phoenixframework.org/v0.11.0/docs/controllers).
+If you want understand a bit more about Phoenix controllers, you can follow up here <http://www.phoenixframework.org/v0.11.0/docs/controllers>.
 
 Let's try run it again:
 `undefined function: Chatty.ChatView.render/2 (module Chatty.ChatView is not available)`
@@ -259,11 +259,11 @@ defmodule Chatty.ChatChannel do
   end
 end
 ```
-There are a couple actions you can handle, `join` is one of them. For moredetails see (http://www.phoenixframework.org/v0.11.0/docs/channels).
+There are a couple actions you can handle, `join` is one of them. For moredetails see <http://www.phoenixframework.org/v0.11.0/docs/channels>.
 
 Lets add some Javascript to join our channel. It won't do much yet, but it should print our log message.
 We'll use jquery to implement updating elements on the page etc, so lets grab that.
-Download () into `web/static/vendor/`.
+Download <http://code.jquery.com/jquery-1.11.2.min.js> into `web/static/vendor/`.
 If you're on an unix-ish OS, this should do the trick:
 `curl http://code.jquery.com/jquery-1.11.2.min.js > web/static/vendor/jquery-1.11.2.min.js`
 Open up `web/static/js/app.js` and enter the following:
@@ -336,7 +336,7 @@ and add a `handle_info` function:
   end
 ```
 The extra `send` and `handle_info` are used because `push` and `broadcast` can only be called after the socket has finished joining.
-These are GenServer functions, for further info on these, see (http://elixir-lang.org/docs/master/elixir/GenServer.html).
+These are GenServer functions, for further info on these, see <http://elixir-lang.org/docs/master/elixir/GenServer.html>.
 
 Next we'll add some javascript to handle the event, and use jQuery to display a message on the page:
 In `app.js` update your existing code to include:
@@ -355,7 +355,7 @@ we've created a simple real-time chat app using WebSockets.
 That's the end of the hand-holding section, but you don't have to stop there! Now is the time to take it further by
 yourself. There are lots of ways to extend this app to learn more, here are a few ideas:
 
- - Create a multi-room chat instead of just a single room - here was a quick attempt of mine: (http://phoenix-multi-room-chat.herokuapp.com/)
+ - Create a multi-room chat instead of just a single room - here was a quick attempt of mine: <http://phoenix-multi-room-chat.herokuapp.com/>
  - Allow private chat channels
  - Require a username before connecting, so the "[username] entered" message can display their name
  - Deploy your app to heroku to chat with us all
@@ -365,25 +365,25 @@ yourself. There are lots of ways to extend this app to learn more, here are a fe
 Here are some links relevant to this little project.
 
 This workshop is based of a sample app provided by Chris McCord:
-(http://phoenixchat.herokuapp.com/)
+<http://phoenixchat.herokuapp.com/>
 with source:
-(https://github.com/chrismccord/phoenix_chat_example).
+<https://github.com/chrismccord/phoenix_chat_example>.
 
 Phoenix docs:
-(http://www.phoenixframework.org/)
+<http://www.phoenixframework.org/>
 
 ## Deploy to Heroku
 To deploy to Heroku, first you'll need a Heroku account, a free one is perfect.
 You can generally follow the guide for setting up a Ruby app, just substituting Elixir commands where appropriate:
-(https://devcenter.heroku.com/articles/getting-started-with-ruby#introduction)
+<https://devcenter.heroku.com/articles/getting-started-with-ruby#introduction>
 
 After the app has been created, you need to set a custom build-pack:
 `heroku buildpack:set https://github.com/HashNuke/heroku-buildpack-elixir`
 
 And include the following config files in your app:
-(https://github.com/colinbankier/chatty/blob/cb-room-server/elixir_buildpack.config)
+<https://github.com/colinbankier/chatty/blob/cb-room-server/elixir_buildpack.config>
 
-(https://github.com/colinbankier/chatty/blob/cb-room-server/Procfile)
+<https://github.com/colinbankier/chatty/blob/cb-room-server/Procfile>
 
 One final thing is to deal with static assets. I'm not sure the correct way to deal with static assets on Heroku
 (maybe someone can enlighten us all?) but the quickest way to make it work is to commit the compiled assets files:
