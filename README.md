@@ -127,7 +127,7 @@ Let's add some real HTML for our Chat App.
 
 # Chat App layout and template
 Templates are rendered in a layout. We'll create a new layout for the chat window of our app.
-Create our new layout `web/templates/layouts/chat.html.eex`
+Create our new layout `web/templates/layout/chat.html.eex`
 ```
 <!DOCTYPE html>
 <html lang="en">
