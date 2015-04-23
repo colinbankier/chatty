@@ -1,7 +1,7 @@
 # Build a real-time chat app with Phoenix
 In this tutorial, we're going to walk through building a simple chat application using WebSockets in the Phoenix web framework.
 This tutorial is based on an example app provided by Chris McCord, the author of Phoenix. You can try out the
-end result here: [](http://phoenixchat.herokuapp.com/)
+end result here: [http://phoenixchat.herokuapp.com/][]
 
 Have a play with it before we get started!
 # Getting Setup
