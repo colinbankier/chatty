@@ -260,6 +260,7 @@ defmodule Chatty.ChatChannel do
 
   def join(topic, message, socket) do
     Logger.debug "JOIN: #{socket.channel}:#{topic}:#{inspect message}"
+    {:ok, socket}
   end
 end
 ```
@@ -273,12 +274,14 @@ If you're on an unix-ish OS, this should do the trick:
 Open up `web/static/js/app.js` and enter the following:
 ```
 $(function(){
-  var socket = new Phoenix.Socket("/ws");
+  console.log('loaded');
+  let socket = new Socket("/ws");
+  console.log(socket);
   socket.connect();
-  socket.join("chat", {}, function(channel){
+  socket.join("chat", {}).receive("ok", channel => {
+    console.log('joined');
   });
 });
-
 ```
 This should join our socket on page load. It won't do anything great yet, but you should see our log message
 in your console.
@@ -286,29 +289,29 @@ in your console.
 # Let's Chat
 Ok, a basic socket is hooked up, let's make it chat!
 First, lets add the client-side code in `app.js`. We'll use jQuery to find the relevant elements on the page, add this
-under our `var socket = ...` line:
+under our `let socket = ...` line:
 ```
-  var $messages = $("#messages");
-  var $messageInput = $("#message-input");
-  var $usernameInput = $("#username");
+  let messages = $("#messages");
+  let messageInput = $("#message-input");
+  let usernameInput = $("#username");
 ```
 Inside the `socket.join` callback, we handle new messages and display them on the page:
 ```
-    channel.on("new:message", function(message){
-      var username = message.username || "anonymous"
-      $messages.append("<br/>[" + username + "] " + message.content);
-      scrollTo(0, document.body.scrollHeight)
+    channel.on("new:message", message => {
+      let username = message.username || "anonymous"
+      messages.append("<br/>[" + username + "] " + message.content);
+      scrollTo(0, document.body.scrollHeight);
     });
 ```
 Next we send our own message when "return" (keycode 13) is pressed in our message input:
 ```
-    $messageInput.off("keypress").on("keypress", function(e){
+    messageInput.off("keypress").on("keypress", e => {
       if (e.keyCode ==13) {
-        channel.send("new:message", {
-          content: $messageInput.val(),
-          username: $usernameInput.val(),
-        });
-        $messageInput.val("");
+        let user = usernameInput.val();
+        let message = messageInput.val()
+        console.log(user, message);
+        channel.push("new:message", { content: message, username: user });
+        messageInput.val("");
       }
     });
 ```
