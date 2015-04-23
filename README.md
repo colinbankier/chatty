@@ -29,11 +29,15 @@ mix phoenix.new chatty
 cd chatty
 ```
 # Lets run it
-`mix phoenix.server`
-then in a browser go to <http://localhost:4000>
+```
+mix deps.get
+mix phoenix.server
+```
+then in a browser go to <http://localhost:4000>.
 Cool. It's given us a default page and stuff.
 ![phoenix default page](https://www.filepicker.io/api/file/0t1GuSinQ1yeRhw3ZgLK)
-To kill it, do `Ctrl-c` twice. Yep, twice.
+You can leave it running in the background while we move on, and you'll notice all our changes are immediately available.
+If you need to stop it though, do `Ctrl-c` twice. Yep, twice.
 
 # Lets look around
 Lets see what `phoenix.new` actually created for us. Here's the default structure of a phoenix app:
